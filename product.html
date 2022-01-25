@@ -1,0 +1,447 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="5x5" href="assets/img/favicon.png">
+    <title>KwickWash</title>
+    <template id="ctrheadercss">
+    </template>
+    <style type="text/css">
+        .classProduct {
+            background-color: #6ab215;
+        }
+    </style>
+</head>
+
+<body class="fix-header">
+    <!-- ============================================================== -->
+    <!-- Preloader -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Wrapper -->
+    <!-- ============================================================== -->
+    <div id="wrapper">
+        <!-- Start Topbar header-->
+        <div id="ctrheader"></div>
+        <!-- End Topbar header-->
+        <!-- Start Left Sidebar -->
+        <div class="navbar-default sidebar" role="navigation" id="ctrLeftMenu">
+        </div>
+        <!-- End Left Sidebar -->
+        <!-- Page Content -->
+        <!-- ============================================================== -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row bg-title">
+                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">Product</h4>
+                    </div>
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+                        <a href="#productBox" onclick="inputClear();" class="btn btn-primary" data-toggle="modal" type="button" aria-haspopup="true" aria-expanded="false" style="float: right;">
+                            <i class="fab fa-servicestack"> </i> Add Product
+                        </a>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+
+                <div class="col-md-12">
+                    <!-- .row -->
+
+                    <div class="row">
+                        
+                        <!-- </div> -->
+                        <!-- /.row -->
+                        <!-- ============================================================== -->
+                        <!-- /row -->
+                        <!-- <div class="row"> -->
+                        <div class="col-sm-12">
+                            <div class="white-box">
+                                <h3 class="box-title m-b-0">My Product</h3>
+                                <div class="table-responsive" style="overflow: auto;">
+                                    <table id="myTable2" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Service</th>
+                                                <th>P-Code</th>
+                                                <th>Product name</th>
+                                                <th>Unit</th>
+                                                <th>Price</th>
+                                                <th>Drop Off Price</th>
+                                                <th>Pickup Drop Price</th>
+                                                <!--<th>Image</th>-->
+                                                <th>Status</th>
+                                              <!--  <th>Manage</th>-->
+                                            </tr>
+                                        </thead>
+                                        <tbody id="listMyProdcut">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+            <style type="text/css">
+                a.disabled {
+                    pointer-events: none;
+                    cursor: default;
+                }
+                .InputPrice {
+                    width: 80px;
+                    text-align: right;
+                }
+            </style>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+            <script type="text/javascript">
+                // jQuery ".Class" SELECTOR.
+                $(document).ready(function () {                    
+                                
+                });
+
+                function bgLoad() {
+                    BindProduct();
+                    BindMyProduct();
+                    CompanyProfile();
+                }
+                //Bind service list code
+                function BindProduct() {
+                    //alert(id);
+                    $('#listProdcut').html('<td colspan="6" style="text-align: center;"><span><i class="fa fa-spinner fa-spin" style="color:#9FCB39; font-size:40px; text-align:center;"></i></span></td>');
+                    var id = $('#hd_Userid').val();
+                    var url = "https://api.kwickwash.com/api/productlist/" + id;
+                    //alert(url);
+                    $.ajax({
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'GET',
+                        success: function (data) {
+                            _details = data;
+                            var _htmlTable = "";
+                            if (typeof (_details) !== 'undefined') {
+                                $.each(_details, function (i, object) {
+                                    _htmlTable += '<tr>';
+                                    var ctr = 1 + i;
+                                    _htmlTable += '<td>' + ctr + '</td>';
+                                    _htmlTable += '<td>' + object.serviceName + '</td>';
+                                    _htmlTable += ' <td>' + object.productName + '</td>';
+                                    _htmlTable += ' <td>' + object.unit + '</td>';
+                                    _htmlTable += ' <td>' + object.price + '</td>';
+                                    if (object.serviceImg == 'undefined') {
+                                        _htmlTable += '<td><i class="fa fa-picture-o" style="font-size: 29px"></i></td>';
+                                    }
+                                    else {
+                                        _htmlTable += '<td><img style="border-radius: 50%;width: 40px;height: 40px;" src="http://admin.kwickwash.in/' + object.proImg + '" /></td>';
+                                    }
+
+                                    if (object.status == '1' || object.status == 'True') {
+                                        _htmlTable += '<td><label class="badge badge-teal">Active</label></td>';
+                                    }
+                                    else {
+                                        _htmlTable += '<td><label class="badge badge-danger">Deactive</label></td>';
+                                    }
+                                    _htmlTable += '<td class="text-center">';
+                                    _htmlTable += '<div class="dropdown" id="div_' + object.proId + '">';
+                                    _htmlTable += '<button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Manage<span class="caret"></span></button>';
+                                    _htmlTable += '<ul class="dropdown-menu">';
+                                    _htmlTable += '<li><a title="Verified" onclick="SetProduct(' + object.proId + ');">Set My Product</a></li>';
+                                    _htmlTable += '</li></ul></div></td></tr>';
+                                });
+                            }
+                            $('#listProdcut').html(_htmlTable);
+                            $('#myTable3').DataTable();
+                          
+                        },
+                        error: function (errorThrown) {
+                            console.log(errorThrown);
+                        }
+                    });
+                }
+
+               //Bind My Product list code
+                function BindMyProduct() {
+                    //alert(id);
+                    $('#listMyProdcut').html('<td colspan="6" style="text-align: center;"><span><i class="fa fa-spinner fa-spin" style="color:#9FCB39; font-size:40px; text-align:center;"></i></span></td>');
+                    var id = $('#hd_Userid').val();
+                    var url = "https://api.kwickwash.com/api/myproduct/" + id;
+                    //alert(url);
+                    $.ajax({
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'GET',
+                        success: function (data) {
+                            _details = data;
+                            var _htmlTable = "";
+                            if (typeof (_details) !== 'undefined') {
+                                $.each(_details, function (i, object) {
+                                    _htmlTable += '<tr>';
+                                    _htmlTable += '<td>' + object.serviceName + '</td>';
+                                    _htmlTable += '<td>' + object.productCode + '</td>';
+                                    _htmlTable += '<td>' + object.productName + '</td>';
+                                    _htmlTable += '<td>' + object.unit + '</td>';
+                                    _htmlTable += '<td>' + object.price + '</td>';
+                                    _htmlTable += '<td><input hidden id="hdndropOffPrice_' + object.prodId + '" value="' + object.myPrice+'" /> ' + object.dropOffPrice + ' <br/>Own Price : <input class="InputPrice" type="text" value="' + object.myPrice + '" id="txtpro_' + object.prodId + '" onblur="UpdatePrice(' + object.prodId + ');"/></td>';
+                                    _htmlTable += '<td><input hidden id="hdnpickupDropPrice_' + object.prodId + '"  value="' + object.myPrice1 +'"/> ' + object.pickupDropPrice + ' <br/> Own Price : <input class="InputPrice" type="text" value="' + object.myPrice1 + '" id="txtpro1_' + object.prodId + '" onblur="UpdatePrice(' + object.prodId + ');"/></td>';
+
+                                    //if (object.serviceImg == 'undefined') {
+                                    //    _htmlTable += '<td><i class="fa fa-picture-o" style="font-size: 29px"></i></td>';
+                                    //}
+                                    //else {
+                                    //    _htmlTable += '<td><img style="border-radius: 50%;width: 40px;height: 40px;" src="http://admin.kwickwash.in/' + object.proImg + '" /></td>';
+                                    //}
+
+                                    if (object.status == 'True') {
+                                        _htmlTable += '<td><label id="lbl_' + object.prodId + '" class="badge badge-teal" onclick="SetValid(' + object.prodId + ');">Active</label></td>';
+                                    }
+                                    else {
+                                        _htmlTable += '<td><label id="lbl_' + object.prodId + '" class="badge badge-danger" onclick="SetValid(' + object.prodId + ');">Deactive</label></td>';
+                                    }
+                                    //_htmlTable += '<td class="text-center">';
+                                    //_htmlTable += '<div class="dropdown">';
+                                    //_htmlTable += '<button class="btn dropdown-toggle" type="button" data-toggle="dropdown">Manage<span class="caret"></span></button>';
+                                    //_htmlTable += '<ul class="dropdown-menu">';
+                                    //_htmlTable += '<li><a title="Verified" onclick="SetValid(' + object.prodId + ');">Activate</a></li>';
+                                    //_htmlTable += '<li><a title="Not Verified" onclick="SetValid(' + object.prodId + ');">Deactivate</a></li>';
+                                    //_htmlTable += '</li></ul></div></td>';
+                                    _htmlTable += '</tr>';
+                                });
+                            }
+                            $('#listMyProdcut').html(_htmlTable);
+                            $('#myTable2').DataTable();
+
+                        },
+                        error: function (errorThrown) {
+                            console.log(errorThrown);
+                        }
+                    });
+                }
+
+                //SetProduct
+
+                function SetProduct(id) {
+                    var data = "{id:'" + id + "'}";
+                    var url = "apiService.asmx/SetProduct";
+                    $.ajax({
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'POST',
+                        data: data,
+                        success: function (data, XMLHttpRequest) {
+                            $('#div_' + id).html('');
+                            $('#div_' + id).html('<span style="color:green">Added</span>');
+                            BindMyProduct();
+                            //BindProduct();
+                        },
+                        error: function (XMLHttpRequest, errorThrown) {
+
+                        }
+                    });
+                }
+
+               
+
+                function UpdatePrice(id) {
+                    var productPrice = $('#txtpro_' + id).val();
+                    var productPrice1 = $('#txtpro1_' + id).val();
+                    var myDropOffPrice = $('#hdndropOffPrice_' + id).val();
+                    var myPickupDropPrice = $('#hdnpickupDropPrice_' + id).val();
+                    if (Number(productPrice) == Number(myDropOffPrice) && Number(productPrice1) == Number(myPickupDropPrice)) {
+                    }
+                    else {
+                        var data = "{id:'" + id + "',productPrice:'" + productPrice + "',productPrice1:'" + productPrice1 + "'}";
+                        var url = "apiService.asmx/SetProductPrice";
+
+                        $.ajax({
+                            url: url,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            type: 'POST',
+                            data: data,
+                            success: function (data, XMLHttpRequest) { 
+                                $.alert({
+                                    title: 'Success!',
+                                    content: 'Price updated successfully',
+                                });
+                            },
+                            error: function (XMLHttpRequest, errorThrown) {
+
+                            }
+                        });
+                    }
+                }
+
+                function SetValid(id) {
+                    var tbName = "tbl.MyProduct";
+                    var cName = "prodId";
+                    var cName1 = "status";
+                    var data = "{id:'" + id + "',tbName:'" + tbName + "',cName:'" + cName + "',cName1:'" + cName1 + "'}";
+                    var url = "apiService.asmx/isValid";
+                    $.ajax({
+                        url: url,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: 'POST',
+                        data: data,
+                        success: function (data, XMLHttpRequest) {                          
+                            if (data.d == 1) {
+                                $.alert({
+                                    title: 'Success!',
+                                    content: 'save successfully',
+                                });
+                                //console.log($('#lbl_' + id).text());
+                                if ($('#lbl_' + id).text() == 'Active') {
+                                    $('#lbl_' + id).removeClass('badge-teal');
+                                    $('#lbl_' + id).addClass('badge-danger');
+                                    $('#lbl_' + id).text('');
+                                    $('#lbl_' + id).text('Deactive');
+                                }
+                                else{
+                                    $('#lbl_' + id).addClass('badge-teal');
+                                    $('#lbl_' + id).removeClass('badge-danger');
+                                    $('#lbl_' + id).text('');
+                                    $('#lbl_' + id).text('Active');
+                                }
+                            }
+                        },
+                        error: function (XMLHttpRequest, errorThrown) {
+
+                        }
+                    });
+                }
+
+            </script> <!-- /.container-fluid -->
+            <footer class="footer text-center"> 2020 &copy; LAUNDRY</footer>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page Content -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="assets/plugins/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="assets/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Menu Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js"></script>
+    <!--slimscroll JavaScript -->
+    <script src="assets/js/jquery.slimscroll.js"></script>
+    <!--Wave Effects -->
+    <script src="assets/js/waves.js"></script>
+    <!--Counter js -->
+    <!--Morris JavaScript -->
+    <script src="assets/plugins/bower_components/raphael/raphael-min.js"></script>
+    <script src="assets/plugins/bower_components/morrisjs/morris.js"></script>
+    <!-- chartist chart -->
+    <script src="assets/plugins/bower_components/chartist-js/dist/chartist.min.js"></script>
+    <script src="assets/plugins/bower_components/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js"></script>
+    <!-- Calendar JavaScript -->
+    <script src="assets/plugins/bower_components/moment/moment.js"></script>
+    <script src='assets/plugins/bower_components/calendar/dist/fullcalendar.min.js'></script>
+    <script src="assets/plugins/bower_components/calendar/dist/cal-init.js"></script>
+    <script src="assets/plugins/bower_components/Minimal-Gauge-chart/js/cmGauge.js"></script>
+    <!-- Date Picker Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- Date range Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="assets/plugins/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="assets/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <!-- Magnific popup JavaScript -->
+    <script src="assets/plugins/bower_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script src="assets/plugins/bower_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="assets/js/validator.js"></script>
+    <script src="assets/js/custom.min.js"></script>
+    <script src="assets/js/dashboard1.js"></script>
+    <script src="assets/js/dashboard2.js"></script>
+    <script src="assets/js/jquery.PrintArea.js" type="text/JavaScript"></script>
+    <script type="text/javascript" src="assets/js/ajaxupload.js"></script>
+    <!--Counter js -->
+    
+    <!-- Custom tab JavaScript -->
+    <script src="assets/js/cbpFWTabs.js"></script>  
+    <script src="assets/plugins/bower_components/toast-master/js/jquery.toast.js"></script>
+    <script src="assets/plugins/bower_components/datatables/datatables.min.js"></script>
+    <!-- start - This is for export functionality only -->
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <!-- end - This is for export functionality only -->
+    
+    <!--Style Switcher -->
+    <script src="assets/plugins/bower_components/styleswitcher/jQuery.style.switcher.js"></script>
+
+    <script type="text/javascript">
+
+    </script>
+    <script src="assets/js/jasny-bootstrap.js"></script>
+    <!-- jQuery file upload -->
+    <script src="assets/plugins/bower_components/dropify/dist/js/dropify.min.js"></script>
+    
+    <div id="productBox" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header w3-theme">
+                    <h3 class="w3-text-white" style="color:white;" id="reqdt"><i class="fab fa-servicestack" style="color:white;"></i> All Product</h3>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="loader"></div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-12 float-lg-right">
+                                <div class="card shadow mb-4">
+                                    <div class="card-body">
+                                        <div class="col-sm-12">
+                                            <div class="white-box">
+                                                <div class="table-responsive" style="overflow: auto;">
+                                                    <table id="myTable3" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>S.No.</th>
+                                                                <th>Service</th>
+                                                                <th>Product name</th>
+                                                                <th>Unit</th>
+                                                                <th>Price</th>
+                                                                <th>Image</th>
+                                                                <th>Status</th>
+                                                                <th>Manage</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="listProdcut">
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

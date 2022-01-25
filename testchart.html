@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/scroller/2.0.5/css/scroller.dataTables.min.css" />
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/scroller/2.0.5/js/dataTables.scroller.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#example').DataTable({
+                ajax: "https://api.kwickwash.com/api/myproduct/122",
+                deferRender: true,
+                scrollY: 200,
+                scrollCollapse: true,
+                scroller: true,
+                initComplete: function () {
+                    this.api().row(1000).scrollTo();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <table id="example" class="display nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>prodId</th>
+                <th>proId</th>
+                <th>srId</th>
+                <th>serviceName</th>
+                <th>productName</th>
+                <th>unit</th>
+                <th>status</th>
+                <th>price</th>
+                <th>proImg</th>
+                <th>productCode</th>
+                <th>dropOffPrice</th>
+                <th>pickupDropPrice</th>
+                <th>productQty</th>
+                <th>minOrder</th>
+                <th>myPrice</th>
+                <th>myPrice1</th>
+            </tr>
+        </thead>
+    </table>
+</body>
+</html>

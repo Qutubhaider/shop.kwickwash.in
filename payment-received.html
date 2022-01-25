@@ -1,0 +1,545 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" type="image/png" sizes="5x5" href="assets/img/favicon.png">
+    <title>Sales Report - KwickWash</title>
+    <template id="ctrheadercss">
+    </template>
+    <style type="text/css">
+        .classPayment {
+            background-color: #6ab215;
+        }
+
+        .dataTable thead .sorting:after {
+            content: "\f0dc";
+            float: right;
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            color: #9FCB39 !important;
+            font-size: 16px;
+        }
+
+        .dataTable thead .sorting:after {
+            opacity: 0.9 !important;
+            content: "\e150";
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 0px !important;
+        }
+    </style>
+    <link href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/1.6.4/css/buttons.dataTables.min.css" rel="stylesheet" />
+</head>
+
+<body class="fix-header">
+    <!-- ============================================================== -->
+    <!-- Preloader -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Wrapper -->
+    <!-- ============================================================== -->
+    <div id="wrapper">
+        <!-- Start Topbar header-->
+        <div id="ctrheader"></div>
+        <!-- End Topbar header-->
+        <!-- Start Left Sidebar -->
+        <div class="navbar-default sidebar" role="navigation" id="ctrLeftMenu">
+        </div>
+        <!-- End Left Sidebar -->
+        <!-- Page Content -->
+        <!-- ============================================================== -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row bg-title">
+                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">Customer Order Details</h4>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="white-box" style="height: 100px;">
+                            <div class="col-lg-12">
+                                <div class="col-lg-3">
+                                    <label>Order No or Mobile No or Name</label>
+                                    <input type="text" id="txtOrderno" class="form-control" />
+                                </div>
+                                <div class="col-lg-3">
+                                    <label>Order Type</label>
+                                    <select id="ddOrderType" class="form-control">
+                                        <option value="0">--All--</option>
+                                        <option value="paid">Paid</option>
+                                        <option value="unpaid">Unpaid</option>
+                                    </select>
+                                </div>                                
+                                <div class="col-lg-3">
+                                    <label style="color:transparent;">Search</label>
+                                    <br />
+                                    <a class="btn btn-info" href="#" onclick="BindMyOrder();"><i class="fa fa-info"></i> Submit</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="white-box">
+                                <h3 class="box-title m-b-0">Customer Order List</h3>
+                                <div class="table-responsive" style="overflow: auto;">
+                                    <table id="myShopOrderList" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th style="display:none;">#</th>
+                                                <th>Order #</th>
+                                                <th>Name</th>
+                                                <th>Order-Date</th>
+                                                <th>Invoice-No</th>
+                                                <th>Amount</th>
+                                                <th>Discount</th>
+                                                <th>Payable-Amt</th>
+                                                <th>Mode Of Pay</th>
+                                                <th>PayNow</th>
+                                                <th>Delivery</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="listMyShopOrder">
+                                        </tbody>
+                                    </table>
+
+                                    <table id="myTotal" class="display nowrap table table-hover table-striped table-bordered" cellspacing="0" width="100%">
+                                        <tbody id="listmyTotal">
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+            <div id="ctrFooter"></div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page Content -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <script src="assets/plugins/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="assets/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Menu Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/sidebar-nav/dist/sidebar-nav.min.js"></script>
+    <!--slimscroll JavaScript -->
+    <script src="assets/js/jquery.slimscroll.js"></script>
+    <!--Wave Effects -->
+    <script src="assets/js/waves.js"></script>
+    <!--Counter js -->
+    <!--Morris JavaScript -->
+    <script src="assets/plugins/bower_components/raphael/raphael-min.js"></script>
+    <script src="assets/plugins/bower_components/morrisjs/morris.js"></script>
+    <!-- chartist chart -->
+    <script src="assets/plugins/bower_components/chartist-js/dist/chartist.min.js"></script>
+    <script src="assets/plugins/bower_components/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js"></script>
+    <!-- Calendar JavaScript -->
+    <script src="assets/plugins/bower_components/moment/moment.js"></script>
+    <script src='assets/plugins/bower_components/calendar/dist/fullcalendar.min.js'></script>
+    <script src="assets/plugins/bower_components/calendar/dist/cal-init.js"></script>
+    <script src="assets/plugins/bower_components/Minimal-Gauge-chart/js/cmGauge.js"></script>
+    <!-- Date Picker Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+    <!-- Date range Plugin JavaScript -->
+    <script src="assets/plugins/bower_components/timepicker/bootstrap-timepicker.min.js"></script>
+    <script src="assets/plugins/bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="assets/plugins/bower_components/sweetalert/sweetalert.min.js"></script>
+    <!-- Magnific popup JavaScript -->
+    <script src="assets/plugins/bower_components/Magnific-Popup-master/dist/jquery.magnific-popup.min.js"></script>
+    <script src="assets/plugins/bower_components/Magnific-Popup-master/dist/jquery.magnific-popup-init.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="assets/js/validator.js"></script>
+    <script src="assets/js/custom.min.js"></script>
+    <!--<script src="assets/js/dashboard1.js"></script>-->
+    <script src="assets/js/dashboard2.js"></script>
+    <script src="assets/js/jquery.PrintArea.js" type="text/JavaScript"></script>
+    <!--Counter js -->
+
+    <style type="text/css">
+        .btnAdd {
+            border-radius: 5px;
+            margin-right: 10px;
+            padding: 5px 7px 4px 6px;
+            font-weight: bold;
+            margin-left: 12px;
+            border: 1px solid;
+        }
+
+        .delete {
+            font-size: 20px;
+        }
+    </style>
+    <script>
+
+        function bgLoad() {
+            CompanyProfile();
+        }
+
+        function BindMyOrder() {
+            var mobileOrder = $('#txtOrderno').val();
+            var status = $('#ddOrderType').val();
+            var id = $('#hd_Userid').val();
+            $('#listMyShopOrder').html('<td colspan="6" style="text-align: center;"><span><i class="fa fa-spinner fa-spin" style="color:#9FCB39; font-size:40px; text-align:center;"></i></span></td>');           
+            var url = "apiService.asmx/GetOrderList1";
+            var data = "{mobileOrder:'" + mobileOrder + "',status:'" + status + "',id:'" + id + "'}";
+            var ctr = 0;
+            $.ajax({
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'POST',
+                data: data,
+                success: function (data) {
+                    _details = data.d;
+                    console.log(_details);
+                    var _htmlTable = "";
+                    if (typeof (_details) !== 'undefined') {
+                        $.each(_details, function (i, object) {
+                            ctr++;
+                            console.log(object.orderId);
+                            _htmlTable += '<tr>';
+                            _htmlTable += '<td style="display:none;">' + ctr + '</td>';                           
+                            _htmlTable += '<td>' + object.ORDERID + '</td>';
+                            _htmlTable += '<td>' + object.NAME + '</td>';
+                            _htmlTable += '<td>' + object.ORDERDATE + '</td>';
+                            _htmlTable += '<td>' + object.INVOICENO + '</td>';
+                            _htmlTable += '<td>' + object.TTLAMOUNT + '</td>';
+                            _htmlTable += '<td>' + object.TTLDISCOUNT + '</td>';
+                            _htmlTable += '<td>' + object.TTLPAYABLEAMOUNT + '</td>';
+                            if (object.STATUS == 'Paid') {
+                                _htmlTable += ' <td>' + object.PAYMENTMODE + '</td>';
+                                _htmlTable += ' <td>' + object.STATUS + '</td>';
+                               
+                            }
+                            else {
+                                _htmlTable +='<td>';
+                                _htmlTable += '<select id="ddPaymentMode">';
+                                _htmlTable += '<option value="Cash">Cash</option>';
+                                _htmlTable += '<option value="Google Pay">Google Pay</option>';
+                                _htmlTable += '<option value="Phone Pay">Phone Pay</option>';
+                                _htmlTable += '<option value="NEFT">NEFT</option>';
+                                _htmlTable += '</select>';
+                                _htmlTable += '</td>';
+                                _htmlTable += ' <td><span id="spaPay'+object.ORDERID+'" style="display:none;">Paid</span><input onclick="callPay(' + object.ORDERID+');" type="checkbox" id="chPaid'+object.ORDERID+'"/></td>';                               
+                            }
+                            if (object.DELIVERYSTATUS == "Delivered" || object.DELIVERYSTATUS == "delivered") {
+                                _htmlTable += ' <td>' + object.DELIVERYSTATUS + '</td>';                                
+                            }
+                            else
+                            {
+                                _htmlTable += ' <td><span id="spaDelivery' + object.ORDERID + '"  style="display:none;">Delivered</span><input onclick="callDelivery(' + object.ORDERID + ');" type="checkbox" id="chDelivery' + object.ORDERID + '"/></td>';
+                            }
+                            _htmlTable += '</tr>';
+                        });
+                    }
+                    $('#listMyShopOrder').html(_htmlTable);
+
+                    $('#myShopOrderList').DataTable({
+                        dom: 'Bfrtip',
+                        buttons: [
+                            'copy', 'csv', 'excel', 'pdf', 'print'
+                        ]
+                    });
+                },
+                error: function (errorThrown) {
+                    console.log(errorThrown);
+                }
+            });
+
+
+        }
+
+        function callPay(orderId) {
+            var url = "apiService.asmx/PayNow";
+            var data = "{orderId:'" + orderId + "',pmode:'" + $('#ddPaymentMode').val()+"'}";
+            var ctr = 0;
+            $.ajax({
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'POST',
+                data: data,
+                success: function (data) {
+                    _details = data.d;
+                    if (_details == 1) {
+                        //alert("Paid Success!");
+                        $('#chPaid' + orderId).hide();
+                        $('#spaPay' + orderId).show();
+                    }
+                }
+            });
+        }
+
+        function callDelivery(orderId) {
+            var url = "apiService.asmx/Delivered";
+            var data = "{orderId:'" + orderId + "'}";
+            var ctr = 0;
+            $.ajax({
+                url: url,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                type: 'POST',
+                data: data,
+                success: function (data) {
+                    _details = data.d;
+                    if (_details == 1) {
+                        //alert("Delivered Success!");
+                        $('#chDelivery' + orderId).hide();
+                        $('#spaDelivery' + orderId).show();
+                    }
+                }
+            });
+        }
+    </script>
+    <!-- Custom tab JavaScript -->
+    <script src="assets/js/cbpFWTabs.js"></script>
+
+
+    <script src="assets/plugins/bower_components/toast-master/js/jquery.toast.js"></script>
+    <script src="assets/plugins/bower_components/datatables/datatables.min.js"></script>
+    <!-- start - This is for export functionality only -->
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.flash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/2.5.0/jszip.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/pdfmake.min.js"></script>
+    <script src="https://cdn.rawgit.com/bpampuch/pdfmake/0.1.18/build/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.2.2/js/buttons.print.min.js"></script>
+    <!-- end - This is for export functionality only -->
+    <script type="text/javascript" src="assets/js/ajaxupload.js"></script>
+
+    <style type="text/css">
+        .btnCart {
+            background: green;
+            padding: 5px;
+            color: white;
+        }
+    </style>
+    <style>
+
+
+
+
+        /*.invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            font-size: 16px;
+            font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif;
+            color: #555;
+        }*/
+
+        .invoice-box table {
+            width: 100%;
+            line-height: inherit;
+            text-align: left;
+        }
+
+            .invoice-box table td {
+                padding: 5px;
+                vertical-align: top;
+            }
+
+            .invoice-box table tr td:nth-child(2) {
+                text-align: right;
+                padding: 5px;
+            }
+
+            .invoice-box table tr.top table td {
+                padding: 5px;
+            }
+
+                .invoice-box table tr.top table td.title {
+                    font-size: 45px;
+                    color: #333;
+                    padding: 5px;
+                }
+
+            .invoice-box table tr.information table td {
+                padding: 5px;
+            }
+
+            .invoice-box table tr.heading td {
+                background: #eee;
+                border-bottom: 1px solid #ddd;
+                font-weight: bold;
+            }
+
+            .invoice-box table tr.details td {
+            }
+
+            .invoice-box table tr.item td {
+                border-bottom: 1px solid #eee;
+            }
+
+            .invoice-box table tr.item.last td {
+                border-bottom: none;
+            }
+
+            .invoice-box table tr.total td:nth-child(2) {
+                border-top: 2px solid #eee;
+                font-weight: bold;
+            }
+
+        @media only screen and (max-width: 600px) {
+            .invoice-box table tr.top table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            .invoice-box table tr.information table td {
+                width: 100%;
+                display: block;
+                text-align: center;
+            }
+        }
+
+        .btnInv {
+            background-color: darkorange;
+            color: white;
+            padding: 15px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+    <div id="orderBox" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header w3-theme">
+                    <h3 class="w3-text-white" style="color:white;" id="reqdt"><i class="fa fa-rupee-sign" style="color:white;"></i> Payment</h3>
+
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="loader"></div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="col-lg-12 float-lg-right">
+                                <div class="card shadow mb-4">
+                                    <div class="card-body">
+                                        <div class="col-sm-12">
+                                            <div class="white-box">
+                                                <div class="invoice-box">
+                                                    <table cellpadding="0" cellspacing="0" style="font-size:13px;">
+                                                        <tr class="top">
+                                                            <td colspan="2">
+                                                                <table>
+                                                                    <tr>
+                                                                        <td class="title" valign="top">
+                                                                            <!--<img src="assets/img/logo.png" style="width:90%; max-width:200px;">-->
+                                                                        </td>
+                                                                        <td>
+                                                                            <a href="#" style="font-size: 12px; color: darkblue; text-decoration: none;">www.kwickwash.in</a><br />
+                                                                            <a href="#" style="font-size: 12px; color: darkblue; text-decoration: none;">contactus@kwickwash.in</a>
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    <tr>
+                                                                        <td style="font-size:12px;">
+                                                                            <!--<b>Shop Address </b><br />-->
+                                                                            <div id="txtShopAddress" style="width:300px;"></div><br />
+
+                                                                        </td>
+                                                                        <td style="text-align: left;">
+                                                                            Order No : <b><span id="txtInvoiceNo"></span></b><br>
+                                                                            Order Date: <b><span id="txtOrderDate"></span></b><br>
+                                                                            Delivery Date : <b><span id="txtDeliveryDate"></span></b>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td style="font-size:12px;">
+                                                                            <b>Customer Details </b><br />
+                                                                            Name : <span id="txtName"></span><br>
+                                                                            Address : <span id="txtAddress"></span><br>
+                                                                            Mobile :<span id="txtMobile"></span>
+                                                                        </td>
+                                                                        <td style="text-align: left;">
+                                                                            Order Type : <b><span id="txtOrderType"></span></b> <br />
+                                                                            Pickup Slip : <b><span id="txtPickupSlip"></span></b><br />
+                                                                            Pickup Request : <span id="txtPickupRequest"></span><br />
+                                                                            Drop Request : <span id="txtDropRequest"></span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+
+                                                    </table>
+                                                    <table style="font-size:13px;">
+                                                        <tbody id="listMyOrder1">
+                                                        </tbody>
+                                                    </table>
+                                                    <hr />
+                                                    <div class="row">
+                                                        <div class="col-lg-4">
+                                                            <div class="form-group" id="payStatus">
+                                                                <label class="control-label">Payment Type</label>
+                                                                <select id="ddPaymentMode" class="form-control">
+                                                                    <option value="0">---Select Payment Type ---</option>
+                                                                    <option value="Cash">Cash</option>
+                                                                    <option value="Google Pay">Google Pay</option>
+                                                                    <option value="PhonePe">PhonePe</option>
+                                                                    <option value="Paytm">Paytm</option>
+                                                                    <option value="UPI">UPI</option>
+                                                                    <option value="NEFT">NEFT</option>
+                                                                    <option value="Debit Card">Debit Card</option>
+                                                                    <option value="Credit Card">Credit Card</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4" id="deliveryStatus" style="display:none;">
+                                                            <div class="form-group">
+                                                                <label class="control-label">Delivery Status</label>
+                                                                <select id="dddeliveryStatus" class="form-control">
+                                                                    <option value="0">---Select Delivery Status  ---</option>
+                                                                    <option value="Pending">Pending</option>
+                                                                    <option value="Process">Process</option>
+                                                                    <option value="Delivered">Delivered</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12" id="linkInv">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>
