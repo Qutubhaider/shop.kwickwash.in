@@ -144,13 +144,12 @@
                                                 <th>Customer-Name</th>
                                                 <th>Mobile-No.</th>
                                                 <th>Order-Date</th>
-                                                <th>Order-Status</th>
                                                 <th>Delivery-Date</th>
                                                 <th>Amount</th>
-                                                <th>Payment-Mode</th>
-                                                <th>Payment-Status</th>
-                                                <th>Delivery-Status</th>
-                                                <th style="width: 88px;">View-Order</th>
+                                               <!-- <th>Payment-Mode</th>-->
+                                                <th>Payment</th>
+                                                <th>Status</th>
+                                                <th style="width: 88px;">Invoice</th>
                                             </tr>
                                         </thead>
                                         <tbody id="listMyShopOrder">
@@ -247,7 +246,7 @@
             //alert(id);
             $('#listMyShopOrder').html('<td colspan="6" style="text-align: center;"><span><i class="fa fa-spinner fa-spin" style="color:#9FCB39; font-size:40px; text-align:center;"></i></span></td>');
             var id = $('#hd_Userid').val();
-            var url = "apiService.asmx/GetShopOrderStatusList";
+            var url = "apiService.asmx/GetShopOrderHistoryList";
             var data = "{id:'" + id + "',pageno:'" + pageno + "',filter:'" + $('#txtFilter').val() + "'}";
             var ctr = 0;
             var pageList = '';
@@ -271,44 +270,14 @@
                             _htmlTable += '<td>' + object.name + '</td>';
                             _htmlTable += '<td>' + object.mobile + '</td>';
                             _htmlTable += ' <td>' + object.orderDate + '</td>';
-                            _htmlTable += ' <td>--</td>';
                             _htmlTable += ' <td>' + object.deliveryDate + '</td>';
                             _htmlTable += ' <td>' + Number(object.ttlPayableAmount).toFixed(2) + '</td>';
-                            _htmlTable += ' <td>' + object.paymentMode + '</td>';
-                            if (object.status == 'unpaid') {
-                                _htmlTable += '<td class="text-center">';
-                                _htmlTable += '<a class="btnPay" onclick="SetValOrder(' + object.orderId + ')" title="Barcode" data-toggle="modal" type="button" aria-haspopup="true" aria-expanded="false" href="#payBox">Pay Now</a>';
-                                _htmlTable += '</td>';
-                            }
-                            else {
-                                _htmlTable += ' <td>' + object.status + '</td>';
-                            }
-                            if (object.dropRequest == 'Drop Off') {
-                                if (object.deliveryStatus == '') {
-                                    _htmlTable += '<td class="text-center">';
-                                    _htmlTable += '<a class="btnPending" href="#">Pending</a>';
-                                    _htmlTable += '</td>';
-                                }
-                                else {
-                                    _htmlTable += '<td class="text-center">';
-                                    _htmlTable += '<a class="btnSuccess"  href="#">' + object.deliveryStatus + '</a>';
-                                    _htmlTable += '</td>';
-                                }
-                            }
-                            else {
-                                if (object.deliveryStatus == "Delivered") {
-                                    _htmlTable += '<td class="text-center">';
-                                    _htmlTable += '<a class="btnSuccess"  href="#">' + object.deliveryStatus + '</a>';
-                                    _htmlTable += '</td>';
-                                }
-                                else {
-                                    _htmlTable += '<td class="text-center">';
-                                    _htmlTable += '<a class="btnRevOrder" title="Barcode" data-toggle="modal" type="button" aria-haspopup="true" aria-expanded="false" href="#deliveryBox">Delivery Schedule</a>';
-                                    _htmlTable += '</td>';
-                                }
-                            }
-                            _htmlTable += '<td class="text-center">';
-                            _htmlTable += '<a class="btnInvo" onclick="BindOrderItem(' + object.orderId + ')" data-toggle="modal" type="button" aria-haspopup="true" aria-expanded="false" target="_blank" href="#orderBox">View Order</a>';
+                            //_htmlTable += ' <td>' + object.paymentMode + '</td>';
+                            _htmlTable += ' <td>' + object.status + '</td>';
+                            _htmlTable += '<td>' + object.deliveryStatus + '</td>';
+                            _htmlTable += '<td>';
+                            _htmlTable += '<a class="btnInvo" target="_blank" class="btnInv" style="text-align: center;" href="invoice.html?oid=' + object.orderId
+                                + '"><i class="fa fa-print" style="color: black;  font-size: 20px;"></i></a>';
                             _htmlTable += '</td></tr>';
                             pageList = object.paging;
                         });
@@ -355,24 +324,7 @@
                     var orderid = 0;
                     var userid = 0;
                     var suserid = 0;
-                    if (typeof (_details) !== 'undefined') {
-                        //$.each(_details, function (i, object) {
-
-                        //    _htmlTable += '<tr class="item">';
-                        //    _htmlTable += '<td>' + object.productName + ' - <span>' + object.serviceName + '</span> </td>';
-                        //    _htmlTable += '<td>' + object.totalQty + ' - Pcs</td>';
-                        //    _htmlTable += '<td>' + Number(object.price).toFixed(2) + '</td>';
-                        //    _htmlTable += '<td>' + Number(object.orderQty).toFixed(2) + '</td>';
-                        //    _htmlTable += '<td>' + object.unit + '</td>';
-                        //    var ttlAmt = (object.price) * (object.orderQty);
-
-                        //    _htmlTable += ' <td style="text-align:right;">' + Number(ttlAmt).toFixed(2) + '</td>';
-                        //    _htmlTable += '</tr>';
-                        //    totalAmt += ttlAmt;
-                        //    orderid = object.orderId;
-                        //    userid = object.cUserid;
-                        //    suserid = object.sUserid;
-                        //});
+                    if (typeof (_details) !== 'undefined') {                       
 
                         $.each(_details, function (i, object) {
 
@@ -497,40 +449,14 @@
                             $('#txtPickupRequest').html(object.pickupRequest);
                             $('#txtDropRequest').html(object.dropRequest);
                             if (object.status == 'unpaid') {
-                                $('#linkInv').html('<a class="btnInv" onclick="callPayment(' + object.orderId + ');">Generate Invoice</a>');
-                                $('#payStatus').show();
-                                $('#deliveryStatus').hide();
+                                //$('#linkInv').html('<a class="btnInv" onclick="callPayment(' + object.orderId + ');">Generate Invoice</a>');
+                                //$('#payStatus').show();
+                                //$('#deliveryStatus').hide();
                             }
                             else {
 
                                 $('#linkInv').html('<a target="_blank" class="btnInv" style="text-align: center;" href="invoice.html?oid=' + id + '">View Invoice</a>');
-
-                                //$('#linkInv').html('<a class="btnInv" style="text-align: center;" onclick="callDelivery(' + object.orderId + ');">Submit</a>');
-                                //$('#deliveryStatus').show();
-                                //$('#payStatus').hide();
                             }
-
-                            //if (object.deliveryStatus == 'Delivered') {
-                            //    $('#linkInv').html('<a class="btnInv" style="text-align: center;" href="invoice.html?oid=' + id + '">View Invoice</a>');
-                            //    $('#deliveryStatus').hide();
-                            //    $('#payStatus').hide();
-                            //}
-
-
-                            ///Some Changes 23 Oct 2021 Start
-
-                            //$('#txtTotalAmt').html(Number(object.ttlAmount).toFixed(2));
-                            //$('#txtDiscount').html(Number(object.ttlDiscount).toFixed(2));
-                            //$('#txtAfterAmt').html(Number(object.ttlPayableAmount).toFixed(2));
-
-                            //$('#txtAddProduct').html(object.addonName);
-                            //$('#txtAddQty').html(object.addonQty);
-                            //$('#txtAddPrice').html(Number(object.addonPrice).toFixed(2));
-                            //$('#txtAddonPrice').html(Number(object.addonTotalPrice).toFixed(2));
-
-                            //var addonPrice = object.addonTotalPrice;
-                            //var totalPayableAmt = Number(object.ttlPayableAmount) + Number(addonPrice);
-                            //$('#txtPayableAmt').html(Number(totalPayableAmt).toFixed(2));
 
                             var loPayableAmount = 0;
                             var loTotalAmt = 0;
@@ -650,31 +576,7 @@
         }
 
         function callPayment(id) {
-            var PaymentMode = $('#ddPaymentMode').val();
-            if (id == 0) {
-                id = $('#hdd_Order_unpaid').val();
-            }
-            var data = "{id:'" + id + "',PaymentMode:'" + PaymentMode + "'}";
-            var url = "apiService.asmx/SetPaymentStatus";
-
-            $.ajax({
-                url: url,
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                type: 'POST',
-                data: data,
-                success: function (data, XMLHttpRequest) {
-                    BindOrder(1);
-                    $('#payBox').each(function () {
-                        $(this).modal('hide');
-                    });
-                    $('#linkInv').html('<a target="_blank" class="btnInv" style="text-align: center;" href="invoice.html?oid=' + id + '">View Invoice</a>');
-
-                },
-                error: function (XMLHttpRequest, errorThrown) {
-
-                }
-            });
+            $('#linkInv').html('<a target="_blank" class="btnInv" style="text-align: center;" href="invoice.html?oid=' + id + '">View Invoice</a>');
         }
 
     </script>
@@ -724,7 +626,7 @@
         }
 
         .btnInvo {
-            background-color: darkseagreen;
+            background-color: transparent;
             padding: 3px;
             color: white;
             border-radius: 2px;

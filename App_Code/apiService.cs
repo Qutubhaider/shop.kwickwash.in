@@ -695,6 +695,57 @@ public class apiService : System.Web.Services.WebService
         }
         return OrderList;
     }
+
+    [WebMethod]
+    public List<ShopOrderStatusList> GetShopOrderHistoryList(int id, int pageno, string filter)
+    {
+
+        int curr = pageno;
+        string pageing = "";
+        DataSet loSourceDataDataSet = new DataSet();
+        SqlConnection loCon = new SqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ConnectionString);
+        SqlCommand loCommand = new SqlCommand();
+        loCommand.Connection = loCon;
+        loCommand.CommandText = "[dbo].[getOrderHistoryList]";
+        loCommand.CommandType = CommandType.StoredProcedure;
+        loCommand.Parameters.Clear();
+        loCommand.Parameters.Add("@UserId", SqlDbType.Int).Value = id;
+        loCommand.Parameters.Add("@name", SqlDbType.VarChar, 200).Value = filter;
+        loCommand.Parameters.Add("@inPageNo", SqlDbType.Int).Value = pageno;
+
+        SqlDataAdapter loDataAdapter = new SqlDataAdapter(loCommand);
+        loDataAdapter.Fill(loSourceDataDataSet, "OutputTable");
+
+        List<ShopOrderStatusList> OrderList = new List<ShopOrderStatusList>(loSourceDataDataSet.Tables[0].Rows.Count);
+        if (loSourceDataDataSet.Tables[0].Rows.Count > 0)
+        {
+            int rowCount = (int)loSourceDataDataSet.Tables[0].Rows[0]["inRecordCount"];
+            if (loSourceDataDataSet.Tables[0].Rows.Count > 0)
+            {
+                pageing = Function.doPaging(curr, rowCount, 10, "&");
+            }
+            foreach (DataRow dr in loSourceDataDataSet.Tables[0].Rows)
+            {
+                ShopOrderStatusList data = new ShopOrderStatusList();
+                data.orderId = dr["orderId"].ToString();
+                data.orderType = dr["OrderType"].ToString();
+                data.dropRequest = dr["dropRequest"].ToString();
+                data.name = dr["name"].ToString();
+                data.mobile = dr["mobile"].ToString();
+                DateTime oDate = Convert.ToDateTime(dr["orderDate"]);
+                data.orderDate = oDate.ToString("dd-MMM-yyyy hh:mm").ToString();
+                data.status = dr["Status"].ToString();
+                oDate = Convert.ToDateTime(dr["deliveryDate"]);
+                data.deliveryDate = oDate.ToString("dd-MMM-yyyy hh:mm").ToString();
+                data.ttlPayableAmount = Convert.ToDecimal(dr["ttlPayableAmount"]);
+                data.paymentMode = dr["paymentMode"].ToString();
+                data.deliveryStatus = dr["deliveryStatus"].ToString();
+                data.paging = pageing;
+                OrderList.Add(data);
+            }
+        }
+        return OrderList;
+    }
     public class CustomerSalesReport
     {
         public int ORDERID { get; set; }
